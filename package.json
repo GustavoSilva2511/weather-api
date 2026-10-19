@@ -1,0 +1,17 @@
+{
+  "name": "weather-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/main.js"
+  },
+  "keywords": [],
+  "type": "module",
+  "author": "Gustavo Silva",
+  "license": "MIT",
+  "dependencies": {
+    "fastify": "^5.12.7"
+  }
+}

@@ -2,7 +2,7 @@ import fastify from 'fastify';
 import dotenv from 'dotenv';
 
 
-dotenv.config();
+dotenv.config({ path: ['../.env', '.env'] });
 
 import { WeatherService } from './weather.service.js';
 import { connectRedis, redisClient } from './redis/redis.client.js';

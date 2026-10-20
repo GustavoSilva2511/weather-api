@@ -4,14 +4,25 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/main.js"
+    "dev": "tsx watch src/main.ts",
+    "build": "tsc",
+    "start": "node dist/main.js"
   },
   "keywords": [],
   "type": "module",
   "author": "Gustavo Silva",
   "license": "MIT",
   "dependencies": {
-    "fastify": "^5.12.7"
+    "@fastify/rate-limit": "^11.2.1",
+    "axios": "^1.20.0",
+    "dotenv": "^18.0.8",
+    "fastify": "^5.12.7",
+    "redis": "^6.3.0"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.9.36",
+    "@types/node": "^26.6.5",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
   }
 }

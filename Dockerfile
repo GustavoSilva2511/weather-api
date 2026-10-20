@@ -1,27 +1,27 @@
 # ==========================================
 # 1. Estágio de Build (Instalação e Compilação)
 # ==========================================
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Copia apenas os arquivos de dependências primeiro (aproveita o cache do Docker)
-COPY package*.json ./
+# Copia arquivos de dependência e configuração do TypeScript
+COPY package*.json tsconfig.json ./
 
-# Instala todas as dependências (incluindo devDependencies necessárias para build, se houver)
+# Instala todas as dependências (incluindo devDependencies para o build do TS)
 RUN npm ci
 
-# Copia o restante do código fonte
+# Copia todo o código fonte (incluindo a pasta src/)
 COPY . .
 
-# Se a sua aplicação precisar de um passo de build (ex: TypeScript, Next.js, etc.)
-# Descomente a linha abaixo:
-# RUN npm run build
+# Roda o build do TypeScript (o tsc vai ler o tsconfig.json, compilar o 'src' e gerar a pasta 'dist')
+RUN npm run build
+
 
 # ==========================================
 # 2. Estágio de Produção (Limpo e Seguro)
 # ==========================================
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS runner
 
 WORKDIR /app
 
@@ -36,11 +36,8 @@ RUN addgroup --system --gid 1001 nodejs && \
 COPY package*.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 
-# Copia o código compilado/fonte do estágio anterior
-COPY --chown=nodejs:nodejs . .
-
-# Se você usa um diretório de build (ex: dist/ ou build/), ajuste o COPY acima ou copie apenas o necessário:
-# COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
+# Copia APENAS o código compilado da pasta 'dist' gerada no estágio anterior
+COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
 
 # Alterna para o usuário não-root
 USER nodejs
@@ -48,5 +45,5 @@ USER nodejs
 # Porta em que a aplicação roda (ajuste conforme necessário)
 EXPOSE 3000
 
-# Comando para iniciar a aplicação
-CMD ["npm", "start"]
+# Comando para iniciar a aplicação rodando o JavaScript compilado
+CMD ["node", "dist/main.js"]

@@ -2,12 +2,23 @@ services:
   api:
     build: .
     ports:
-      - "8000:8000"
+      - "8000:3000"
+    env_file:
+      - .env
     environment:
-      - REDIS_HOST=redis
+      - PORT=3000
+      - REDIS_URL=redis://redis:6379
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
+    restart: always
+
   redis:
     image: redis:alpine
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
